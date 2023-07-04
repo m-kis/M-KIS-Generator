@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#create_db').change(function () {
+                if ($(this).is(":checked")) {
+                    $('#db_options').show();
+                } else {
+                    $('#db_options').hide();
+                }
+            });
+        });
+
+    
+    </script>
+
+    <title>M-KIS-Generator </title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<script>
+    $(document).ready(function(){
+      var ruleCount = 1;
+    
+      $('#add_rule').click(function(){
+        ruleCount++;
+        var ruleHtml = `
+          <div class="form-group">
+            <label for="protocol_${ruleCount}">Protocole</label>
+            <select class="form-control" id="protocol_${ruleCount}" name="protocol_${ruleCount}">
+              <option value="tcp">TCP</option>
+              <option value="udp">UDP</option>
+              <option value="icmp">ICMP</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="port_${ruleCount}">Port</label>
+            <input type="number" class="form-control" id="port_${ruleCount}" name="port_${ruleCount}">
+          </div>
+          <div class="form-group">
+            <label for="cidr_${ruleCount}">Plage d'adresses IP (CIDR)</label>
+            <input type="text" class="form-control" id="cidr_${ruleCount}" name="cidr_${ruleCount}">
+          </div>
+        `;
+        $('#security_rules').append(ruleHtml);
+      });
+    });
+    </script>
+    
+<body>
+    <div class="container">
+        <h1>Générateur de scripts Terraform</h1>
+        <form action="/generate" method="POST">
+            <div class="form-group">
+                <label for="user_count">Nombre d'utilisateurs</label>
+                <input type="number" class="form-control" id="user_count" name="user_count" required>
+            </div>
+            <div class="form-group">
+                <label for="ssh_key">Clé SSH</label>
+                <textarea class="form-control" id="ssh_key" name="ssh_key" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <h3>Base de données</h3>
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="create_db" name="create_db">
+                    <label class="form-check-label" for="create_db">Créer une base de données</label>
+                </div>
+
+                <div id="db_options" style="display: none;">
+                    <div class="form-group">
+                        <label for="db_instance_identifier">Identifiant de l'instance</label>
+                        <input type="text" class="form-control" id="db_instance_identifier"
+                            name="db_instance_identifier">
+                    </div>
+                    <div class="form-group">
+                        <label for="engine">Moteur</label>
+                        <select class="form-control" id="engine" name="engine">
+                            <option value="mysql">MySQL</option>
+                            <option value="postgres">PostgreSQL</option>
+                            <option value="mariadb">MariaDB</option>
+                            <option value="oracle-se1">Oracle SE1</option>
+                            <!-- Ajoutez d'autres moteurs de base de données ici -->
+                        </select>
+                        <small id="engineHelp" class="form-text text-muted">
+                            Pour plus d'informations sur les moteurs de base de données, consultez la
+                            <a href="https://aws.amazon.com/rds/">documentation AWS RDS</a>.
+                        </small>
+                    </div>
+                    <!-- ... autres champs ... -->
+                </div>
+                <div class="form-group">
+                    <label for="region">Région AWS</label>
+                    <input type="text" class="form-control" id="region" name="region" required>
+                </div>
+                <!-- ... autres champs ... -->
+
+                <h3>Instance EC2</h3>
+                <div class="form-group">
+                    <label for="instance_type">Type d'instance</label>
+                    <select class="form-control" id="instance_type" name="instance_type" required>
+                        <option value="t2.micro">t2.micro</option>
+                        <option value="t2.small">t2.small</option>
+                        <option value="t2.medium">t2.medium</option>
+                        <!-- Ajoutez d'autres types d'instances ici -->
+                    </select>
+                    <small id="instanceHelp" class="form-text text-muted">
+                        Pour plus d'informations sur les types d'instances, consultez la
+                        <a href="https://aws.amazon.com/ec2/instance-types/">documentation AWS</a>.
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="ami_id">AMI ID</label>
+                    <input type="text" class="form-control" id="ami_id" name="ami_id" required>
+                    <small id="amiHelp" class="form-text text-muted">
+                        Pour trouver un AMI ID, consultez la
+                        <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html">documentation
+                            AWS EC2</a>.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="key_name">Nom de la clé</label>
+                    <input type="text" class="form-control" id="key_name" name="key_name" required>
+                </div>
+
+                <h3>Instance RDS</h3>
+                <div class="form-group">
+                    <label for="db_instance_identifier">Identifiant de l'instance</label>
+                    <input type="text" class="form-control" id="db_instance_identifier" name="db_instance_identifier"
+                        required>
+                </div>
+
+                <h3>Groupe de sécurité</h3>
+                <div class="form-group">
+                  <label for="security_group_name">Nom du groupe de sécurité</label>
+                  <input type="text" class="form-control" id="security_group_name" name="security_group_name" required>
+                </div>
+                
+                <h4>Règles de sécurité</h4>
+                <div id="security_rules">
+                  <div class="form-group">
+                    <label for="protocol_1">Protocole</label>
+                    <select class="form-control" id="protocol_1" name="protocol_1">
+                      <option value="tcp">TCP</option>
+                      <option value="udp">UDP</option>
+                      <option value="icmp">ICMP</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="port_1">Port</label>
+                    <input type="number" class="form-control" id="port_1" name="port_1">
+                  </div>
+                  <div class="form-group">
+                    <label for="cidr_1">Plage d'adresses IP (CIDR)</label>
+                    <input type="text" class="form-control" id="cidr_1" name="cidr_1">
+                  </div>
+                </div>
+                
+                <button type="button" id="add_rule">Ajouter une règle</button>
+                
+
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+
+                <h3>Bucket S3</h3>
+                <div class="form-group">
+                    <label for="bucket_name">Nom du seau</label>
+                    <input type="text" class="form-control" id="bucket_name" name="bucket_name" required>
+                    <small id="bucketHelp" class="form-text text-muted">
+                        Pour comprendre les règles de nommage des seaux, consultez la
+                        <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/BucketRestrictions.html">documentation
+                            AWS S3</a>.
+                    </small>
+                </div>
+
+
+                <!-- ... autres champs ... -->
+
+            </div>
+            <button type="submit" class="btn btn-primary">Générer</button>
+        </form>
+    </div>
+</body>
+
+</html>
