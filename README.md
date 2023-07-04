@@ -1,4 +1,4 @@
-# Générateur de scripts Terraform pour AWS 
+# M-KIS Generator est un Générateur de scripts Terraform pour AWS 
 
 Ce projet est une application web qui génère des scripts Terraform pour déployer des ressources AWS, basé sur les entrées utilisateur dans un formulaire web. L'application est construite avec Node.js et Express.js.
 Il est en cours de dev et totalement opensource, n'hésitez pas à contribuer et à pull request.
